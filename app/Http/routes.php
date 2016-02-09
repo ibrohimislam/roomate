@@ -33,5 +33,5 @@ Route::group(['middleware' => ['web']], function () {
 
 Route::group(['middleware'=> ['auth.basic'], 'prefix' => 'api/v1'], function() {
     Route::resource('rooms', 'RoomsController', ['only' => ['index', 'show', 'store', 'destroy', 'update']]);
-    Route::resource('courses', 'CoursesController', ['only' => ['show']]);
+    Route::resource('courses', 'CoursesController', ['only' => ['index', 'show', 'store', 'destroy', 'update']]);
 });
