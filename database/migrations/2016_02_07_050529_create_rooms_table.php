@@ -18,6 +18,7 @@ class CreateRoomsTable extends Migration
             $table->integer('capacity');
             $table->integer('status');
             $table->timestamps();
+
         });
     }
 

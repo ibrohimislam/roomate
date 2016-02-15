@@ -20,6 +20,9 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        //seed
+        DB::table('users')->insert(array(array('name' => 'ibrohim', 'email'=>'ibrohimislam@gmail.com', 'password'=>'$2a$12$MO4L5XyU15NAHk39GCB3luV0uYvi5sfKCb/02YAdvFF4VGnjMUDVi'),));
     }
 
     /**
