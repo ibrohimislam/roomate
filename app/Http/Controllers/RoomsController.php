@@ -26,7 +26,7 @@ class RoomsController extends Controller
 	    
 	    $room = new Room;
 	    $room->name = $request->name;
-	    $room->capacity = $request->capacity;
+	    $room->capacity = abs($request->capacity);
 	    $room->status = 0;
 		$saved = $room->save();
 
@@ -53,7 +53,7 @@ class RoomsController extends Controller
     	
     	$room = Room::find($roomId);
 	    $room->name = $request->name;
-	    $room->capacity = $request->capacity;
+	    $room->capacity = abs($request->capacity);
 	    $room->status = $request->status;
 		$updated = $room->save();
 

@@ -19,6 +19,7 @@
                 <li><a href="#/">Beranda</a></li>
                 <li><a href="#/kuliah">Kuliah</a></li>
                 <li><a href="#/ruangan">Ruangan</a></li>
+                <li><a href="#/statistik">Statistik</a></li>
             </ul>
         </div>
 
@@ -41,4 +42,6 @@
     <script src="js/autocomplete.js"></script>
     <script src="js/app.library.js"></script>
     <script src="js/app.extended.js"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </html>

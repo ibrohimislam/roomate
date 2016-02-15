@@ -25,7 +25,7 @@ class CoursesController extends Controller
 	    
 	    $course = new Course;
 	    $course->name = $request->name;
-	    $course->attendants = $request->attendants;
+	    $course->attendants = abs($request->attendants);
 		$saved = $course->save();
 
 	    return response()->json(array(
@@ -51,7 +51,7 @@ class CoursesController extends Controller
     	
     	$course = Course::find($courseId);
 	    $course->name = $request->name;
-	    $course->attendants = $request->attendants;
+	    $course->attendants = abs($request->attendants);
 		$updated = $course->save();
 
 	    return response()->json(array(
