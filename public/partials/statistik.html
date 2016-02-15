@@ -1,12 +1,22 @@
         <div class="medium-12 columns" style="margin-top: 10px;">
-            <div class="panel-heading">
+            <div class="p?anel-heading">
                 Statistik
             </div>
             <div class="panel-body">
-                <div class="text-right">
-                    <input ng-model="tanggal" class="float-right" style="width: 200px;" type="date" ng-change="refreshStatistic()">
-                </div>
-
+                  <div class="float-right">
+                    <div class="small-12 large-12 columns small-centered">
+                      <form class="custom">
+                          <div class="large-12 small-12 columns">
+                            <label>
+                              Kode Ruangan
+                            </label>
+                              <select class="form-control" ng-change="refreshStatistic()" ng-model="selectedRoom">
+                                <option ng-selected="selectedRoom == room.id" ng-repeat="room in rooms" ng-value="room.id">{{room.name}}</option>
+                              </select>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
                 <div id="piechart" style="width: 900px; height: 500px;"></div>
             </div>
         </div>
