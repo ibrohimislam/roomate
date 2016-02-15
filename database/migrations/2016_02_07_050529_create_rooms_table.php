@@ -16,7 +16,7 @@ class CreateRoomsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->integer('capacity');
-            $table->enum('status', array('normal', 'perbaikan'));
+            $table->integer('status');
             $table->timestamps();
         });
     }
