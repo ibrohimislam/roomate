@@ -239,29 +239,52 @@ app.controller('ScheduleController', function($scope, $compile, $sce, CoursesRes
 
 });
 
-app.controller('StatisticController', function($scope){
+app.controller('StatisticController', function($scope, RoomsResources, CoursesResources, ScheduleResources){
+	
+	RoomsResources.list().$promise.then(function(result){
+		$scope.rooms = result;
+//		$scope.selectedRoom = ""+result[0].id;
+//		$scope.refreshStatistic();	
+	});
 
-	$scope.tanggal = new Date();
 
+	$scope.courses=CoursesResources.list();
+
+	ScheduleResources.get().$promise.then(function(result){
+		$scope.schedule= result;
+	}
 	google.charts.load('current', {'packages':['corechart']});
+
+	var a,b,c,d,e=0;
 	
 	$scope.refreshStatistic = function(){
-		var angka = prompt("kasjdkjslasd");
-		drawChart(parseInt(angka));
+		var kode = $scope.selectedRoom;
+		if(kode=="1"){
+			a=10; b=20; c=5; d=7; e =1; 
+		} else if(kode=="2"){
+			a=5; b=8; c=1; d=3; e =7; 
+		} else if(kode=="3"){
+			a=9; b=3; c=16; d=24; e =37; 
+		} else if(kode=="4"){
+			a=1; b=9; c=30; d=20; e =13; 
+		} else {
+			a=2; b=1; c=19; d=23; e =8;
+		}
+		drawChart();
 	}
 
-	function drawChart(x) {
+	function drawChart() {
 		var data = google.visualization.arrayToDataTable([
-		['Task', 'Hours per Day'],
-		['Work',     x],
-		['Eat',      2],
-		['Commute',  2],
-		['Watch TV', 2],
-		['Sleep',    7]
+		['Kuliah', 'penggunaan ruangan'],
+		[$scope.courses[0].name,  a],
+		[$scope.courses[1].name,  b],
+		[$scope.courses[2].name,  c],
+		[$scope.courses[3].name,  d],
+		[$scope.courses[4].name,  e]
 		]);
 
 		var options = {
-		title: 'My Daily Activities'
+		title: 'presentase penggunaan setiap user'
 		};
 
 		var chart = new google.visualization.PieChart(document.getElementById('piechart'));
