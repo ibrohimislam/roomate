@@ -1,0 +1,59 @@
+        <div class="medium-12 columns" style="margin-top: 10px;">
+            <div class="panel-heading">
+                Jadwal Kuliah
+            </div>
+            <div class="panel-body">
+                <div class="text-right">
+                    <input ng-model="tanggal" class="float-right" style="width: 200px;" type="date">
+                </div>
+            	<table class="schedule">
+                    <thead>
+                        <tr>
+	                        <th>Kode Ruangan</th>
+	                        <th class="text-center" width="90">07:00</th>
+	                        <th class="text-center" width="90">08:00</th>
+	                        <th class="text-center" width="90">09:00</th>
+	                        <th class="text-center" width="90">10:00</th>
+	                        <th class="text-center" width="90">11:00</th>
+	                        <th class="text-center" width="90">12:00</th>
+	                        <th class="text-center" width="90">13:00</th>
+	                        <th class="text-center" width="90">14:00</th>
+	                        <th class="text-center" width="90">15:00</th>
+	                        <th class="text-center" width="90">16:00</th>
+	                        <th class="text-center" width="90">17:00</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	<tr ng-repeat="(_, room) in rooms">
+	                        <td>{{room.name}}</td>
+	                        <td class="{{schedule.htmlClass}}" ng-repeat="(_, schedule) in room.schedules" colspan="{{schedule.duration}}" ng-bind-html="schedule.htmlContent"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+		<div class="reveal" id="modalTambah" data-reveal>
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h2>Tambah Jadwal</h2>
+            <form id="form-tambah">
+                <label>Kode Kuliah:<autocomplete attr-placeholder="Kode Kuliah" ng-model="course" data="courseNames"></autocomplete></label>
+                <label>Kode Ruangan:<autocomplete attr-placeholder="Kode Ruangan" ng-model="room" data="roomNames"></autocomplete></label>
+                <a class="button" ng-click="add()">Tambah</a>
+            </form>
+        </div>
+
+        <div class="reveal" id="modalHapus" data-reveal>
+            <button class="close-button" data-close aria-label="Close modal" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h2>Perhatian</h2>
+            <form id="form-tambah">
+                <input type="hidden" id="hapus-id">
+                <p>Apakah Anda yakin untuk menghapus jadwal ini?</p>
+                <a class="button alert" ng-click="destroy()">Hapus</a>
+            </form>
+        </div>

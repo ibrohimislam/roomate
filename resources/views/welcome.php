@@ -8,19 +8,25 @@
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/app.extended.css">
     <link rel="stylesheet" href="css/foundation-icons.css">
+    <link rel="stylesheet" href="css/autocomplete.css">
   </head>
   <body>
     
     <div class="row" style="margin-top: 10px;">
-    <div class="medium-12 columns">
-        <ul class="menu" style="border: 1px solid #DDD; border-radius: 3px;">
-            <li class="menu-text logo"><a href="#">Roomate</a></li>
-            <li><a href="#">Beranda</a></li>
-            <li><a href="#/kuliah">Kuliah</a></li>
-            <li><a href="#/ruangan">Ruangan</a></li>
-        </ul>
+        <div class="medium-12 columns">
+            <ul class="menu" style="border: 1px solid #DDD; border-radius: 3px;">
+                <li class="menu-text logo"><a href="#">Roomate</a></li>
+                <li><a href="#/">Beranda</a></li>
+                <li><a href="#/kuliah">Kuliah</a></li>
+                <li><a href="#/ruangan">Ruangan</a></li>
+            </ul>
+        </div>
+
+        <div id="view" ng-view></div>
     </div>
-    <div ng-view></div>
+
+    <div class="reveal tiny" id="spinner" style="width: 5%;" data-reveal>
+        <img src="/img/spinner.gif">
     </div>
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -32,6 +38,7 @@
     <script src="bower_components/angular-route/angular-route.min.js"></script>
 
     <script src="js/app.js"></script>
+    <script src="js/autocomplete.js"></script>
     <script src="js/app.library.js"></script>
     <script src="js/app.extended.js"></script>
 </html>

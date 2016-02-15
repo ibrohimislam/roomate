@@ -8,3 +8,8 @@ function getFormJSON($form){
 
     return JSON.stringify(indexed_array);
 }
+
+function parseDate(d) {
+    d2 = d.getMonth() +'-'+ d.getDate() +'-'+d.getFullYear();
+    return d2;
+}
