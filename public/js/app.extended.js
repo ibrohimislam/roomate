@@ -280,9 +280,9 @@ app.controller('StatisticController', function($scope, RoomsResources, CoursesRe
 
 	$scope.courses=CoursesResources.list();
 
-	ScheduleResources.get().$promise.then(function(result){
-		$scope.schedule= result;
-	}
+	//ScheduleResources.get().$promise.then(function(result){
+	//	$scope.schedule= result;
+//	}
 	google.charts.load('current', {'packages':['corechart']});
 
 	var a,b,c,d,e=0;
