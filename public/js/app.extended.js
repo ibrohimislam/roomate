@@ -208,16 +208,13 @@ app.controller('ScheduleController', function($scope, $compile, $sce, CoursesRes
 	});
 	
 	RoomsResources.list().$promise.then(function(result){
-
-
-
 		result[0].schedules = [
-				{duration:3, htmlClass:"text-center occupied color1", htmlContent:$sce.trustAsHtml('IF3230' + '&nbsp;' + '<a ng-click="openModalDelete(6)">&times;</a>')},
-				{duration:1, htmlClass:"text-center space",           htmlContent:$sce.trustAsHtml('<a ng-click="openModalTambah(5)" class="fi-plus"></a>')},
-				{duration:2, htmlClass:"text-center occupied color2", htmlContent:$sce.trustAsHtml('IF3130' + '&nbsp;' + '<a ng-click="openModalDelete(6)">&times;</a>')},
-				{duration:2, htmlClass:"text-center occupied color3", htmlContent:$sce.trustAsHtml('IF3230' + '&nbsp;' + $compile($sce.trustAsHtml('<a ng-click="openModalDelete(6)">&times;</a>'), $scope) )},
-				{duration:2, htmlClass:"text-center occupied color4", htmlContent:$sce.trustAsHtml('IF3240' + '&nbsp;' + '<a ng-click="openModalDelete(6)">&times;</a>')},
-				{duration:1, htmlClass:"text-center occupied color5", htmlContent:$sce.trustAsHtml('IF3250' + '&nbsp;' + '<a ng-click="openModalDelete(6)">&times;</a>')},
+				{duration:3, htmlClass:"text-center occupied color1", htmlContent:$sce.trustAsHtml('IF3230' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
+				{duration:1, htmlClass:"text-center space",           htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(5)" class="fi-plus"></a>')},
+				{duration:2, htmlClass:"text-center occupied color2", htmlContent:$sce.trustAsHtml('IF3130' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
+				{duration:2, htmlClass:"text-center occupied color3", htmlContent:$sce.trustAsHtml('IF3230' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
+				{duration:2, htmlClass:"text-center occupied color4", htmlContent:$sce.trustAsHtml('IF3240' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
+				{duration:1, htmlClass:"text-center occupied color5", htmlContent:$sce.trustAsHtml('IF3250' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
 			];
 		result[1].schedules = [{duration:11, htmlClass:"text-center occupied color5", htmlContent: $sce.trustAsHtml('IF3250' + '&nbsp;' + '<a ng-click="openModalDelete(6)">&times;</a>')}];
 		$scope.rooms = result;
