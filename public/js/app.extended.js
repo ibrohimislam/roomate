@@ -177,13 +177,13 @@ app.controller('CoursesController', function($scope, CoursesResources){
 	}
 });
 
-app.factory('ScheduleResources', function ($resource) {
+app.factory('SchedulesResources', function ($resource) {
 	
 	$("#view").foundation();
 
 	var auth_header = { 'Authorization': 'Basic aWJyb2hpbWlzbGFtQGdtYWlsLmNvbTpwYXNzd29yZA=='};
 
-    return $resource('http://lily.dev/api/v1/schedule/:date/:id', {date:'@date', id:'@id'}, {
+    return $resource('http://lily.dev/api/v1/rooms/:roomId/schedules/:date', {date:'@date', roomId:'@roomId'}, {
 		list:  { method: 'GET', isArray:true, headers: auth_header},
         get:  { method: 'GET', headers: auth_header},
         store: { method: 'POST', headers: auth_header},
@@ -193,7 +193,7 @@ app.factory('ScheduleResources', function ($resource) {
 
 });
 
-app.controller('ScheduleController', function($scope, $compile, $sce, CoursesResources, RoomsResources, ScheduleResources){
+app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, CoursesResources, RoomsResources, SchedulesResources){
 	
 	$("#view").foundation();
 
@@ -211,19 +211,49 @@ app.controller('ScheduleController', function($scope, $compile, $sce, CoursesRes
 		})
 	});
 	
-	RoomsResources.list().$promise.then(function(result){
-		result[0].schedules = [
-				{duration:3, htmlClass:"text-center occupied color1", htmlContent:$sce.trustAsHtml('IF3230' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
-				{duration:1, htmlClass:"text-center space",           htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(5)" class="fi-plus"></a>')},
-				{duration:2, htmlClass:"text-center occupied color2", htmlContent:$sce.trustAsHtml('IF3130' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
-				{duration:2, htmlClass:"text-center occupied color3", htmlContent:$sce.trustAsHtml('IF3230' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
-				{duration:2, htmlClass:"text-center occupied color4", htmlContent:$sce.trustAsHtml('IF3240' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
-				{duration:1, htmlClass:"text-center occupied color5", htmlContent:$sce.trustAsHtml('IF3250' + '&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>')},
-			];
-		result[1].schedules = [{duration:11, htmlClass:"text-center occupied color5", htmlContent: $sce.trustAsHtml('IF3250' + '&nbsp;' + '<a ng-click="openModalDelete(6)">&times;</a>')}];
-		$scope.rooms = result;
-		$scope.rooms.forEach(function(el){
-			$scope.roomNames.push(el.name);
+	RoomsResources.list().$promise.then(function(rooms){
+		
+		var roomSchedules = [];
+
+		angular.forEach(rooms, function(room){
+			roomSchedules.push(SchedulesResources.list({date:"02-16-2016", roomId: room.id}).$promise.then(function(response){
+		 		var schedulesPromises = [];
+
+		 		for (i=1, j=0; i<=11; i++) {
+					console.log(i);
+		 			if (j >= response.length) {
+		 				schedulesPromises.push($q.when({
+		 					duration:1,
+		 					htmlClass:"text-center space",
+		 					htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(5)" class="fi-plus"></a>')
+		 				}));
+		 			} else {
+		 				if (i<response[j]) {
+		 					schedulesPromises.push($q.when({
+			 					duration:1,
+			 					htmlClass:"text-center space",
+			 					htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(5)" class="fi-plus"></a>')
+			 				}));
+		 				} else {
+			 				schedulesPromises.push($q.when({
+			 					duration:response[j].duration,
+			 					htmlClass:"text-center occupied color" + (Math.floor(Math.random() * 30) + 1),
+			 					htmlContent:$sce.trustAsHtml("<b>" + response[j].course.name + '</b>&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>'),
+			 				}));
+			 				i+= response[j++].duration - 1;
+		 				}
+		 			}
+		 		}
+
+		 		return $q.all(schedulesPromises).then(function(result){
+		 			return $q.when({name: room.name, schedules: result});
+		 		});
+			}));
+		});
+
+		$q.all(roomSchedules).then(function(result){
+			console.log(result);
+			$scope.rooms = result;
 		})
 	});
 

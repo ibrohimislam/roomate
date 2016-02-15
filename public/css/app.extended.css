@@ -71,18 +71,35 @@ td>.button {
 .occupied > a:hover {
     color: #faa;
 }
-.color1 {
-    background-color: #225378; 
-}
-.color2 {
-    background-color: #1695A3;
-}
-.color3 {
-    background-color: #ACF0F2;
-}
-.color4 {
-    background-color: #F3FFE2;
-}
-.color5 {
-    background-color: #EB7F00;
-}
+
+
+.color1{ background-color: #3B8A2E }
+.color2{ background-color: #70BD33 }
+.color3{ background-color: #64A733 }
+.color4{ background-color: #B8ECD7 }
+.color5{ background-color: #B1E001 }
+.color6{ background-color: #CEF09D }
+.color7{ background-color: #476C5E }
+.color8{ background-color: #6AA4A7 }
+.color9{ background-color: #F5DF7F }
+.color10{ background-color: #C09D5B }
+.color11{ background-color: #8C501D }
+.color12{ background-color: #1682FF }
+.color13{ background-color: #67AEE8 }
+.color14{ background-color: #34B7FF }
+.color15{ background-color: #30B8E8 }
+.color16{ background-color: #56E2FF }
+.color17{ background-color: #3FFFD0 }
+.color18{ background-color: #3AE89D }
+.color19{ background-color: #3FFF88 }
+.color20{ background-color: #3AE85C }
+.color21{ background-color: #3FFF40 }
+.color22{ background-color: #5AFBFF }
+.color23{ background-color: #0C49FA }
+.color24{ background-color: #0200FF }
+.color25{ background-color: #26AAFF }
+.color26{ background-color: #BF7ABB }
+.color27{ background-color: #77CFD9 }
+.color28{ background-color: #DEF294 }
+.color29{ background-color: #67C287 }
+.color30{ background-color: #F27052 }
