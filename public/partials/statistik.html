@@ -39,6 +39,12 @@
                  </div>
                 </div>
                 <div id="piechart2" style="width: 900px; height: 500px;"></div>
+                
+                <table>
+                    <tr ng-repeat="baris in akumulasiPenggunaanRuangan">
+                        <td ng-repeat="kolom in baris">{{kolom}}</td>
+                    </tr>
+                </table>
             </div>
         </div>
 

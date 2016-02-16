@@ -308,19 +308,26 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 
 app.controller('StatisticController', function($q, $scope, RoomsResources, CoursesResources, SchedulesResources){
 	
+	$('#view').foundation();
+
+	$('#spinner').foundation('open');
+	
 	RoomsResources.list().$promise.then(function(result){
 		$scope.rooms = result;
+		$('#spinner').foundation('close');
 	});
 
 	$scope.courses=CoursesResources.list();
 
 	google.charts.load('current', {'packages':['corechart']});
 
-	//google.charts.setOnLoadCallback(drawChart);
+	google.charts.setOnLoadCallback(drawChart);
 	//google.charts.setOnLoadCallback(refreshStatisticByCourses);
 
 
 	$scope.refreshStatisticByCourses = function(){
+		$('#spinner').foundation('open');
+
 		var kode = $scope.selectedRoom;
 
 		var akumulasiJadwal = {};
@@ -365,6 +372,8 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 
 					var chart = new google.visualization.PieChart(document.getElementById('piechart'));
 
+					$('#spinner').foundation('close');
+
 					chart.draw(data, options);
 				});
 			});
@@ -379,45 +388,55 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 		SchedulesResources.list({roomId:'_'}).$promise.then(function(result){
 			var defer = $q.defer();
 
+			console.log(result);
+
+			
+	
 			for(var i=0; i<result.length; i++) {
 				var _jadwal = result[i];
 
-				if (typeof akumulasiPenggunaan[_jadwal.rooms.name] == "undefined")
-					akumulasiPenggunaan[_jadwal.rooms.name] = _jadwal.duration;
+				if (typeof akumulasiPenggunaan[_jadwal.room.name] == "undefined")
+					akumulasiPenggunaan[_jadwal.room.name] = _jadwal.duration;
 				else
-					akumulasiPenggunaan[_jadwal.rooms.name] += _jadwal.duration;
+					akumulasiPenggunaan[_jadwal.room.name] += _jadwal.duration;
 
 				if (i == result.length-1) {
 					defer.resolve();
 				}
 			};
 
+
+
 			if (result.length == 0)
 				defer.resolve();
 
 			return defer.promise.then(function(){
 				
+
 				console.log(akumulasiPenggunaan);
 
-				var dat = [$q.when(['Ruang Kuliah', 'penggunaan ruangan'])];
+				var data_penggunaan_ruangan = [$q.when(['Ruang Kuliah', 'penggunaan ruangan (jam)'])];
 
 				Object.keys(akumulasiPenggunaan).forEach(function(key, index){
-					dat.push($q.when([key, akumulasiPenggunaan[key]]));
+					data_penggunaan_ruangan.push($q.when([key, akumulasiPenggunaan[key]]));
 				});
 
-				return $q.all(dat).then(function(result){
+				return $q.all(data_penggunaan_ruangan).then(function(result){
+					$scope.akumulasiPenggunaanRuangan = result;
+					
 					console.log(result);
 
-					var dat = google.visualization.arrayToDataTable(result);
+					var data_penggunaan_ruangan = google.visualization.arrayToDataTable(result);
 
-				});
-				var opt = {
-					title: 'perbandingan penggunaan ruangan (dalam jam dan persen)'
-					};
+					var opt = {
+						title: 'perbandingan penggunaan ruangan (dalam jam dan persen)'
+						};
 
 					var chart = new google.visualization.PieChart(document.getElementById('piechart2'));
 
-					chart.draw(dat, opt);
+					chart.draw(data_penggunaan_ruangan, opt);
+				});
+
 			});
 		});
 	}
