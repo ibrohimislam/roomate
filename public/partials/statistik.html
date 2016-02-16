@@ -1,23 +1,44 @@
         <div class="medium-12 columns" style="margin-top: 10px;">
-            <div class="p?anel-heading">
-                Statistik
+            <div class="panel-heading">
+                Statistik Penggunaan ruangan terhadap kuliah
             </div>
             <div class="panel-body">
-                  <div class="float-right">
-                    <div class="small-12 large-12 columns small-centered">
-                      <form class="custom">
-                          <div class="large-12 small-12 columns">
-                            <label>
-                              Kode Ruangan
-                            </label>
-                              <select class="form-control" ng-change="refreshStatistic()" ng-model="selectedRoom">
-                                <option ng-selected="selectedRoom == room.id" ng-repeat="room in rooms" ng-value="room.id">{{room.name}}</option>
-                              </select>
-                          </div>
-                      </form>
-                    </div>
-                  </div>
+              <div class="float-right">
+                 <div class="small-12 large-12 columns small-centered">
+                    <form class="custom">
+                      <div class="large-12 small-12 columns">
+                        <label>
+                         Kode Ruangan
+                        </label>
+                        <select class="form-control" ng-change="refreshStatisticByCourses()" ng-model="selectedRoom">
+                        <option ng-selected="selectedRoom == room.id" ng-repeat="room in rooms" ng-value="room.id">{{room.name}}</option>
+                    </select>
+                   </div>
+                  </form>
+                 </div>
+                </div>
                 <div id="piechart" style="width: 900px; height: 500px;"></div>
+            </div>
+
+            <div class="panel-heading">
+                Statistik Penggunaan Ruangan
+            </div>
+            <div class="panel-body">
+              <div class="float-right">
+                 <div class="small-12 large-12 columns small-centered">
+                    <form class="custom">
+                      <div class="large-12 small-12 columns">
+                        <!--label>
+                         Kode Ruangan
+                        </label-->
+                        <!--select class="form-control" ng-change="refreshStatistic()" ng-model="selectedRoom">
+                        <option ng-selected="selectedRoom == room.id" ng-repeat="room in rooms" ng-value="room.id">{{room.name}}</option>
+                    </select-->
+                   </div>
+                  </form>
+                 </div>
+                </div>
+                <div id="piechart2" style="width: 900px; height: 500px;"></div>
             </div>
         </div>
 

@@ -18,6 +18,7 @@ app.config(['$routeProvider', function($routeProvider) {
 		templateUrl: 'partials/statistik.html',
 		controller: 'StatisticController'
 	}).
+
 	otherwise({
 		redirectTo: '/'
 	});
@@ -269,56 +270,119 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 
 });
 
-app.controller('StatisticController', function($scope, RoomsResources, CoursesResources, SchedulesResources){
+app.controller('StatisticController', function($q, $scope, RoomsResources, CoursesResources, SchedulesResources){
 	
 	RoomsResources.list().$promise.then(function(result){
 		$scope.rooms = result;
-//		$scope.selectedRoom = ""+result[0].id;
-//		$scope.refreshStatistic();	
 	});
-
 
 	$scope.courses=CoursesResources.list();
 
-	ScheduleResources.get().$promise.then(function(result){
-		$scope.schedule= result;
-	}
 	google.charts.load('current', {'packages':['corechart']});
 
-	var a,b,c,d,e=0;
-	
-	$scope.refreshStatistic = function(){
+	//google.charts.setOnLoadCallback(drawChart);
+	//google.charts.setOnLoadCallback(refreshStatisticByCourses);
+
+
+	$scope.refreshStatisticByCourses = function(){
 		var kode = $scope.selectedRoom;
-		if(kode=="1"){
-			a=10; b=20; c=5; d=7; e =1; 
-		} else if(kode=="2"){
-			a=5; b=8; c=1; d=3; e =7; 
-		} else if(kode=="3"){
-			a=9; b=3; c=16; d=24; e =37; 
-		} else if(kode=="4"){
-			a=1; b=9; c=30; d=20; e =13; 
-		} else {
-			a=2; b=1; c=19; d=23; e =8;
-		}
-		drawChart();
+
+		var akumulasiJadwal = {};
+
+		SchedulesResources.list({roomId: kode}).$promise.then(function(result){
+			var defer = $q.defer();
+
+			for(var i=0; i<result.length; i++) {
+				var jadwal = result[i];
+
+				if (typeof akumulasiJadwal[jadwal.course.name] == "undefined")
+					akumulasiJadwal[jadwal.course.name] = jadwal.duration;
+				else
+					akumulasiJadwal[jadwal.course.name] += jadwal.duration;
+
+				if (i == result.length-1) {
+					defer.resolve();
+				}
+			};
+
+			if (result.length == 0)
+				defer.resolve();
+
+			return defer.promise.then(function(){
+				
+				console.log(akumulasiJadwal);
+
+				var data = [$q.when(['Kuliah', 'penggunaan ruangan'])];
+
+				Object.keys(akumulasiJadwal).forEach(function(key, index){
+					data.push($q.when([key, akumulasiJadwal[key]]));
+				});
+
+				return $q.all(data).then(function(result){
+					console.log(result);
+
+					var data = google.visualization.arrayToDataTable(result);
+
+					var options = {
+					title: 'perbandingan penggunaan ruangan setiap kuliah (dalam jam dan persen)'
+					};
+
+					var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+					chart.draw(data, options);
+				});
+			});
+		});
 	}
 
+      
 	function drawChart() {
-		var data = google.visualization.arrayToDataTable([
-		['Kuliah', 'penggunaan ruangan'],
-		[$scope.courses[0].name,  a],
-		[$scope.courses[1].name,  b],
-		[$scope.courses[2].name,  c],
-		[$scope.courses[3].name,  d],
-		[$scope.courses[4].name,  e]
-		]);
+	
+		var akumulasiPenggunaan = {};
 
-		var options = {
-		title: 'presentase penggunaan setiap user'
-		};
+		SchedulesResources.list({roomId:'_'}).$promise.then(function(result){
+			var defer = $q.defer();
 
-		var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+			for(var i=0; i<result.length; i++) {
+				var _jadwal = result[i];
 
-		chart.draw(data, options);
+				if (typeof akumulasiPenggunaan[_jadwal.rooms.name] == "undefined")
+					akumulasiPenggunaan[_jadwal.rooms.name] = _jadwal.duration;
+				else
+					akumulasiPenggunaan[_jadwal.rooms.name] += _jadwal.duration;
+
+				if (i == result.length-1) {
+					defer.resolve();
+				}
+			};
+
+			if (result.length == 0)
+				defer.resolve();
+
+			return defer.promise.then(function(){
+				
+				console.log(akumulasiPenggunaan);
+
+				var dat = [$q.when(['Ruang Kuliah', 'penggunaan ruangan'])];
+
+				Object.keys(akumulasiPenggunaan).forEach(function(key, index){
+					dat.push($q.when([key, akumulasiPenggunaan[key]]));
+				});
+
+				return $q.all(dat).then(function(result){
+					console.log(result);
+
+					var dat = google.visualization.arrayToDataTable(result);
+
+				});
+				var opt = {
+					title: 'perbandingan penggunaan ruangan (dalam jam dan persen)'
+					};
+
+					var chart = new google.visualization.PieChart(document.getElementById('piechart2'));
+
+					chart.draw(dat, opt);
+			});
+		});
 	}
 });
