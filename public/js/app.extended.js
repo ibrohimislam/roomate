@@ -305,7 +305,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 
 });
 
-app.controller('StatisticController', function($scope, RoomsResources, CoursesResources, ScheduleResources){
+app.controller('StatisticController', function($scope, RoomsResources, CoursesResources, SchedulesResources){
 	
 	RoomsResources.list().$promise.then(function(result){
 		$scope.rooms = result;
@@ -316,9 +316,9 @@ app.controller('StatisticController', function($scope, RoomsResources, CoursesRe
 
 	$scope.courses=CoursesResources.list();
 
-	//ScheduleResources.get().$promise.then(function(result){
-	//	$scope.schedule= result;
-//	}
+	ScheduleResources.get().$promise.then(function(result){
+		$scope.schedule= result;
+	}
 	google.charts.load('current', {'packages':['corechart']});
 
 	var a,b,c,d,e=0;
