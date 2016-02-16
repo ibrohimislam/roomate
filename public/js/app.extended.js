@@ -203,69 +203,105 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 	$scope.courseNames = [];
 	$scope.roomNames = [];
 
+	$scope.selectedRoomId = "";
+	$scope.selectedCourseId  = "";
+
 	$scope.tanggal = currentDate;
 	
 	CoursesResources.list().$promise.then(function(result){
 		$scope.courses = result;
-		$scope.courses.forEach(function(el){
-			$scope.courseNames.push(el.name);
-		})
 	});
 	
-	RoomsResources.list().$promise.then(function(rooms){
-		
-		var roomSchedules = [];
+	var updateSchedule = function(){
+		$('#spinner').foundation('open');
 
-		angular.forEach(rooms, function(room){
-			roomSchedules.push(SchedulesResources.list({date:"02-16-2016", roomId: room.id}).$promise.then(function(response){
-		 		var schedulesPromises = [];
+		RoomsResources.list().$promise.then(function(rooms){
+			$scope.rooms = rooms;
 
-		 		for (i=1, j=0; i<=11; i++) {
-					console.log(i);
-		 			if (j >= response.length) {
-		 				schedulesPromises.push($q.when({
-		 					duration:1,
-		 					htmlClass:"text-center space",
-		 					htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(5)" class="fi-plus"></a>')
-		 				}));
-		 			} else {
-		 				if (i<response[j]) {
-		 					schedulesPromises.push($q.when({
+			var roomSchedules = [];
+
+			angular.forEach(rooms, function(room){
+				roomSchedules.push(SchedulesResources.list({date:"02-16-2016", roomId: room.id}).$promise.then(function(response){
+			 		var schedulesPromises = [];
+
+			 		for (i=1, j=0; i<=11; i++) {
+						console.log(i);
+			 			if (j >= response.length) {
+			 				schedulesPromises.push($q.when({
 			 					duration:1,
 			 					htmlClass:"text-center space",
-			 					htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(5)" class="fi-plus"></a>')
+			 					htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(this, '+i+')" class="fi-plus"></a>')
 			 				}));
-		 				} else {
-			 				schedulesPromises.push($q.when({
-			 					duration:response[j].duration,
-			 					htmlClass:"text-center occupied color" + (Math.floor(Math.random() * 30) + 1),
-			 					htmlContent:$sce.trustAsHtml("<b>" + response[j].course.name + '</b>&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete(6)">&times;</a>'),
-			 				}));
-			 				i+= response[j++].duration - 1;
-		 				}
-		 			}
-		 		}
+			 			} else {
+			 				if (i<response[j].start) {
+			 					schedulesPromises.push($q.when({
+				 					duration:1,
+				 					htmlClass:"text-center space",
+				 					htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(this, '+i+')" class="fi-plus"></a>')
+				 				}));
+			 				} else {
+				 				schedulesPromises.push($q.when({
+				 					duration:response[j].duration,
+				 					htmlClass:"text-center occupied color" + (Math.floor(Math.random() * 30) + 1),
+				 					htmlContent:$sce.trustAsHtml("<b>" + response[j].course.name + '</b>&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete('+response[j].id+')" class="fi-x"></a>'),
+				 				}));
+				 				i+= response[j++].duration - 1;
+			 				}
+			 			}
+			 		}
 
-		 		return $q.all(schedulesPromises).then(function(result){
-		 			return $q.when({name: room.name, schedules: result});
-		 		});
-			}));
+			 		return $q.all(schedulesPromises).then(function(result){
+			 			return $q.when({id: room.id, name: room.name, schedules: result});
+			 		});
+				}));
+			});
+
+			$q.all(roomSchedules).then(function(result){
+				console.log(result);
+				$scope.rooms = result;
+
+				$('#spinner').foundation('close');
+			})
 		});
-
-		$q.all(roomSchedules).then(function(result){
-			console.log(result);
-			$scope.rooms = result;
-		})
-	});
-
-	$scope.openModalTambah = function(waktu) {
-		$scope.waktu = waktu;
-		$('#modalTambah').foundation('open');
 	}
 
-	$scope.openModalDelete = function(waktu) {
+	updateSchedule();
+
+	$scope.openModalTambah = function(element, waktu) {
 		$scope.waktu = waktu;
+		$("#waktu").val((waktu+6)+":00");
+		$('#modalTambah').foundation('open');
+		$scope.selectedCourseId = $scope.courses[0].id;
+		$scope.selectedRoomId = $(element).parent().attr('room-data-id');
+	}
+
+	$scope.openModalDelete = function(id) {
+		$('#hapus-id').val(id)
 		$('#modalHapus').foundation('open');
+	}
+
+	$scope.add = function(){
+		var data = {
+			date: parseDateSQL($scope.tanggal),
+			start: $scope.waktu,
+			course_id: $scope.selectedCourseId,
+			duration: $scope.duration,
+		}
+
+		console.log($scope.selectedRoomId);
+
+		SchedulesResources.store({date:"", roomId: $scope.selectedRoomId}, data).$promise.then(function (result) {
+		    updateSchedule();
+		});
+	}
+
+	$scope.destroy = function(id){
+		var targetId = $('#hapus-id').val();
+
+		SchedulesResources.destroy({date:targetId, roomId:"_"}).$promise.then(function (result) {
+		    $('#modalHapus').foundation('close');
+		    updateSchedule();
+		});
 	}
 
 });

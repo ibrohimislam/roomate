@@ -13,3 +13,15 @@ function parseDate(d) {
     d2 = d.getMonth() +'-'+ d.getDate() +'-'+d.getFullYear();
     return d2;
 }
+
+function parseDateSQL(d) {
+	console.log(d);
+    d2 = d.getFullYear() +'/'+ pad(d.getMonth()+1,2) +'/'+ pad(d.getDate(),2);
+    return d2;
+}
+
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
