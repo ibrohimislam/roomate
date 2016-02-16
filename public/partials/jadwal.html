@@ -26,7 +26,7 @@
                     <tbody>
                     	<tr ng-repeat="(_, room) in rooms">
 	                        <td>{{room.name}}</td>
-	                        <td class="{{schedule.htmlClass}}" ng-repeat="(_, schedule) in room.schedules" colspan="{{schedule.duration}}" ng-bind-html="schedule.htmlContent"></td>
+	                        <td class="{{schedule.htmlClass}}" ng-repeat="(_, schedule) in room.schedules" room-data-id="{{room.id}}" colspan="{{schedule.duration}}" ng-bind-html="schedule.htmlContent"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -40,10 +40,18 @@
             </button>
             <h2>Tambah Jadwal</h2>
             <form id="form-tambah">
-                <label>Kode Kuliah:<autocomplete attr-placeholder="Kode Kuliah" ng-model="course" data="courseNames"></autocomplete></label>
-                <label>Kode Ruangan:<autocomplete attr-placeholder="Kode Ruangan" ng-model="room" data="roomNames"></autocomplete></label>
+                <label>Jam Mulai:</label>
+                <input class="form-control" type="text" id="waktu" disabled>
+                <label>Kode Kuliah:</label>
+                <select class="form-control" ng-model="selectedCourseId">
+                    <option ng-selected="selectedCourseId == course.id" ng-repeat="course in courses" ng-value="course.id">{{course.name}}</option>
+                </select>
+                <label>Kode Ruangan:</label>
+                <select class="form-control" ng-model="selectedRoomId">
+                    <option ng-selected="selectedRoomId == room.id" ng-repeat="room in rooms" ng-value="room.id">{{room.name}}</option>
+                </select>
                 <label>Durasi:
-                    <input type="number">
+                    <input type="number" ng-model="duration">
                 </label>
                 <a class="button" ng-click="add()">Tambah</a>
             </form>
