@@ -212,7 +212,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 		$scope.courses = result;
 	});
 	
-	var updateSchedule = function(){
+	$scope.updateSchedule = function(){
 		$('#spinner').foundation('open');
 
 		RoomsResources.list().$promise.then(function(rooms){
@@ -221,7 +221,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 			var roomSchedules = [];
 
 			angular.forEach(rooms, function(room){
-				roomSchedules.push(SchedulesResources.list({date:"02-16-2016", roomId: room.id}).$promise.then(function(response){
+				roomSchedules.push(SchedulesResources.list({date:parseDate($scope.tanggal), roomId: room.id}).$promise.then(function(response){
 			 		var schedulesPromises = [];
 
 			 		for (i=1, j=0; i<=11; i++) {
@@ -251,7 +251,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 			 		}
 
 			 		return $q.all(schedulesPromises).then(function(result){
-			 			return $q.when({id: room.id, name: room.name, schedules: result});
+			 			return $q.when({id: room.id, status: room.status, name: room.name, schedules: result});
 			 		});
 				}));
 			});
@@ -265,7 +265,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 		});
 	}
 
-	updateSchedule();
+	$scope.updateSchedule();
 
 	$scope.openModalTambah = function(element, waktu) {
 		$scope.waktu = waktu;
@@ -291,7 +291,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 		console.log($scope.selectedRoomId);
 
 		SchedulesResources.store({date:"", roomId: $scope.selectedRoomId}, data).$promise.then(function (result) {
-		    updateSchedule();
+		    $scope.updateSchedule();
 		});
 	}
 
@@ -300,7 +300,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 
 		SchedulesResources.destroy({date:targetId, roomId:"_"}).$promise.then(function (result) {
 		    $('#modalHapus').foundation('close');
-		    updateSchedule();
+		    $scope.updateSchedule();
 		});
 	}
 

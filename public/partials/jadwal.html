@@ -4,7 +4,7 @@
             </div>
             <div class="panel-body">
                 <div class="text-right">
-                    <input ng-model="tanggal" class="float-right" style="width: 200px;" type="date">
+                    <input ng-model="tanggal" ng-change="updateSchedule()" class="float-right" style="width: 200px;" type="date">
                 </div>
             	<table class="schedule">
                     <thead>
@@ -24,9 +24,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                    	<tr ng-repeat="(_, room) in rooms">
-	                        <td>{{room.name}}</td>
-	                        <td class="{{schedule.htmlClass}}" ng-repeat="(_, schedule) in room.schedules" room-data-id="{{room.id}}" colspan="{{schedule.duration}}" ng-bind-html="schedule.htmlContent"></td>
+                    	<tr ng-repeat="(_, my_room) in rooms" ng-class="(my_room.status==1)?'rusak':'normal'">
+	                        <td>{{my_room.name}}</td>
+	                        <td class="{{schedule.htmlClass}}" ng-repeat="(_, schedule) in my_room.schedules" room-data-id="{{my_room.id}}" colspan="{{schedule.duration}}" ng-bind-html="schedule.htmlContent"></td>
                         </tr>
                     </tbody>
                 </table>

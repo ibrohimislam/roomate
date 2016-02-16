@@ -10,7 +10,7 @@ function getFormJSON($form){
 }
 
 function parseDate(d) {
-    d2 = d.getMonth() +'-'+ d.getDate() +'-'+d.getFullYear();
+    d2 = (d.getMonth()+1) +'-'+ d.getDate() +'-'+d.getFullYear();
     return d2;
 }
 
