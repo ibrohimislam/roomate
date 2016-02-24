@@ -9,7 +9,7 @@
             	<table class="schedule">
                     <thead>
                         <tr>
-	                        <th>Kode Ruangan</th>
+	                        <th>Kode Ruangan / Kapasitas</th>
 	                        <th class="text-center" width="90">07:00</th>
 	                        <th class="text-center" width="90">08:00</th>
 	                        <th class="text-center" width="90">09:00</th>
@@ -24,12 +24,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                    	<tr ng-repeat="(_, my_room) in rooms" ng-class="(my_room.status==1)?'rusak':'normal'">
-	                        <td>{{my_room.name}}</td>
-	                        <td class="{{schedule.htmlClass}}" ng-repeat="(_, schedule) in my_room.schedules" room-data-id="{{my_room.id}}" colspan="{{schedule.duration}}" ng-bind-html="schedule.htmlContent"></td>
+                    	<tr style="height: 45px;" ng-repeat="(_, my_room) in rooms" ng-class="(my_room.status==1)?'rusak':'normal'">
+	                        <td>{{my_room.name}} ({{my_room.capacity}})</td>
+	                        <td class="{{schedule.htmlClass}}" ng-repeat="(_, schedule) in my_room.schedules" room-data-id="{{my_room.id}}" room-data-capacity="{{my_room.capacity}}" room-data-name="{{my_room.name}}" colspan="{{schedule.duration}}" ng-bind-html="schedule.htmlContent"></td>
                         </tr>
                     </tbody>
                 </table>
+
+                <div style="height:100px;">
+                <h3>Keterangan</h3>
+                <div style="float: left; width: 20px; height:20px;" class="alert"></div><div style="float: left;">&nbsp;Overkapasitas</div><br/>
+                <div style="float: left; width: 20px; height:20px;" class="rusak"></div><div style="float: left;">&nbsp;Dalam perbaikan</div>
+                </div>
 
             </div>
         </div>
@@ -42,16 +48,18 @@
             <form id="form-tambah">
                 <label>Jam Mulai:</label>
                 <input class="form-control" type="text" id="waktu" disabled>
+                <label>Kode Ruangan:</label>
+                <input class="form-control" type="text" id="ruangan" disabled>
                 <label>Kode Kuliah:</label>
                 <select class="form-control" ng-model="selectedCourseId">
-                    <option ng-selected="selectedCourseId == course.id" ng-repeat="course in courses" ng-value="course.id">{{course.name}}</option>
-                </select>
-                <label>Kode Ruangan:</label>
-                <select class="form-control" ng-model="selectedRoomId">
-                    <option ng-selected="selectedRoomId == room.id" ng-repeat="room in rooms" ng-value="room.id">{{room.name}}</option>
+                    <option ng-selected="selectedCourseId == course.id" ng-repeat="course in coursesRuangan" ng-value="course.id">{{course.name}}</option>
                 </select>
                 <label>Durasi:
-                    <input type="number" ng-model="duration">
+                    <input class="form-control" type="number" ng-model="duration">
+                </label>
+                <label>Mingguan:
+                    <input class="form-control" type="checkbox" ng-model="weekly">
+                    <input class="form-control" type="text" placeholder="Jumlah minggu" ng-show="weekly" ng-model="weektimes">
                 </label>
                 <a class="button" ng-click="add()">Tambah</a>
             </form>

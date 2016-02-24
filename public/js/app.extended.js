@@ -22,7 +22,9 @@ app.config(['$routeProvider', function($routeProvider) {
 	otherwise({
 		redirectTo: '/'
 	});
-}]);
+}]).run(function() {
+	google.charts.load('current', {'packages':['corechart']});
+});
 
 app.factory('RoomsResources', function ($resource) {
 
@@ -216,6 +218,7 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 		$('#spinner').foundation('open');
 
 		RoomsResources.list().$promise.then(function(rooms){
+	 		var kolor = 1;
 			$scope.rooms = rooms;
 
 			var roomSchedules = [];
@@ -225,7 +228,6 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 			 		var schedulesPromises = [];
 
 			 		for (i=1, j=0; i<=11; i++) {
-						console.log(i);
 			 			if (j >= response.length) {
 			 				schedulesPromises.push($q.when({
 			 					duration:1,
@@ -240,9 +242,14 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 				 					htmlContent:$sce.trustAsHtml('<a onclick="angular.element(this).scope().openModalTambah(this, '+i+')" class="fi-plus"></a>')
 				 				}));
 			 				} else {
+			 					kolor = (kolor)%29+1;
+
+			 					console.log(room.capacity);
+			 					console.log(response[j].course.attendants);
+
 				 				schedulesPromises.push($q.when({
 				 					duration:response[j].duration,
-				 					htmlClass:"text-center occupied color" + (Math.floor(Math.random() * 30) + 1),
+				 					htmlClass:"text-center occupied color" + (kolor) + " " + ((room.capacity < response[j].course.attendants)?"alert":""),
 				 					htmlContent:$sce.trustAsHtml("<b>" + response[j].course.name + '</b>&nbsp;' + '<a onclick="angular.element(this).scope().openModalDelete('+response[j].id+')" class="fi-x"></a>'),
 				 				}));
 				 				i+= response[j++].duration - 1;
@@ -251,7 +258,13 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 			 		}
 
 			 		return $q.all(schedulesPromises).then(function(result){
-			 			return $q.when({id: room.id, status: room.status, name: room.name, schedules: result});
+			 			return $q.when({
+			 				id: room.id,
+			 				status: room.status,
+			 				name: room.name,
+			 				capacity: room.capacity,
+			 				schedules: result
+			 			});
 			 		});
 				}));
 			});
@@ -268,11 +281,31 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 	$scope.updateSchedule();
 
 	$scope.openModalTambah = function(element, waktu) {
+		td_element = $(element).parent();
 		$scope.waktu = waktu;
-		$("#waktu").val((waktu+6)+":00");
-		$('#modalTambah').foundation('open');
-		$scope.selectedCourseId = $scope.courses[0].id;
-		$scope.selectedRoomId = $(element).parent().attr('room-data-id');
+		$scope.room_id = td_element.attr('room-data-id');
+		
+		capacity = td_element.attr('room-data-capacity');
+		console.log(capacity);
+
+		coursesRuangan = [];
+
+		for (var i = $scope.courses.length - 1; i >= 0; i--) {
+			if ($scope.courses[i].attendants > capacity)
+				coursesRuangan.push($q.when({id: $scope.courses[i].id, name: $scope.courses[i].name + " (overkapasitas)"}));
+			else
+				coursesRuangan.push($q.when({id: $scope.courses[i].id, name: $scope.courses[i].name}));
+		};
+
+		$q.all(coursesRuangan).then(function(result){
+			$scope.coursesRuangan = result;
+
+			$("#waktu").val((waktu+6)+":00");
+			$("#ruangan").val(td_element.attr('room-data-name'));
+			$('#modalTambah').foundation('open');
+
+		});
+
 	}
 
 	$scope.openModalDelete = function(id) {
@@ -280,19 +313,38 @@ app.controller('ScheduleController', function($q, 	$scope, $compile, $sce, Cours
 		$('#modalHapus').foundation('open');
 	}
 
-	$scope.add = function(){
+	var addItem = function(date) {
 		var data = {
-			date: parseDateSQL($scope.tanggal),
+			date: date,
 			start: $scope.waktu,
 			course_id: $scope.selectedCourseId,
 			duration: $scope.duration,
 		}
 
-		console.log($scope.selectedRoomId);
+		return SchedulesResources.store({date:"", roomId: $scope.room_id}, data);
+	}
 
-		SchedulesResources.store({date:"", roomId: $scope.selectedRoomId}, data).$promise.then(function (result) {
-		    $scope.updateSchedule();
-		});
+	$scope.add = function(){
+		if ($scope.weekly) {
+			
+			console.log("YA");
+
+			var promises = [];
+
+			for (var i = 0; i < $scope.weektimes; i++) {
+				console.log("YA " + i);
+				promises.push(addItem(parseDateSQL(dateTranslation($scope.tanggal,i))));			
+			};
+
+			$q.all(promises).then(function(result){
+			    $scope.updateSchedule();
+			})
+
+		} else {
+			addItem(parseDateSQL($scope.tanggal)).$promise.then(function (result) {
+			    $scope.updateSchedule();
+			});;
+		}
 	}
 
 	$scope.destroy = function(id){
@@ -318,8 +370,6 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 	});
 
 	$scope.courses=CoursesResources.list();
-
-	google.charts.load('current', {'packages':['corechart']});
 
 	google.charts.setOnLoadCallback(drawChart);
 	//google.charts.setOnLoadCallback(refreshStatisticByCourses);
@@ -355,7 +405,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 				
 				console.log(akumulasiJadwal);
 
-				var data = [$q.when(['Kuliah', 'penggunaan ruangan'])];
+				var data = [$q.when(['Kuliah', 'booking ruangan'])];
 
 				Object.keys(akumulasiJadwal).forEach(function(key, index){
 					data.push($q.when([key, akumulasiJadwal[key]]));
@@ -367,7 +417,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 					var data = google.visualization.arrayToDataTable(result);
 
 					var options = {
-					title: 'perbandingan penggunaan ruangan setiap kuliah (dalam jam dan persen)'
+					title: 'perbandingan booking ruangan setiap kuliah (dalam jam dan persen)'
 					};
 
 					var chart = new google.visualization.PieChart(document.getElementById('piechart'));
@@ -415,7 +465,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 
 				console.log(akumulasiPenggunaan);
 
-				var data_penggunaan_ruangan = [$q.when(['Ruang Kuliah', 'penggunaan ruangan (jam)'])];
+				var data_penggunaan_ruangan = [$q.when(['Ruang Kuliah', 'booking ruangan (jam)'])];
 
 				Object.keys(akumulasiPenggunaan).forEach(function(key, index){
 					data_penggunaan_ruangan.push($q.when([key, akumulasiPenggunaan[key]]));
@@ -429,7 +479,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 					var data_penggunaan_ruangan = google.visualization.arrayToDataTable(result);
 
 					var opt = {
-						title: 'perbandingan penggunaan ruangan (dalam jam dan persen)'
+						title: 'perbandingan booking ruangan (dalam jam dan persen)'
 						};
 
 					var chart = new google.visualization.PieChart(document.getElementById('piechart2'));

@@ -98,13 +98,20 @@ td>.button {
 .color23{ background-color: #0C49FA }
 .color24{ background-color: #0200FF }
 .color25{ background-color: #26AAFF }
-.color26{ background-color: #BF7ABB }
-.color27{ background-color: #77CFD9 }
-.color28{ background-color: #DEF294 }
-.color29{ background-color: #67C287 }
-.color30{ background-color: #F27052 }
+.color26{ background-color: #77CFD9 }
+.color27{ background-color: #DEF294 }
+.color28{ background-color: #67C287 }
+.color29{ background-color: #F27052 }
 
 
 .rusak {
-    background-color: #F00;
+    background-color: #BF0404;
+}
+
+.rusak:nth-child(even) {
+    background-color: #BF0404;
+}
+
+.alert {
+    background-color: #FF1414 !important;
 }

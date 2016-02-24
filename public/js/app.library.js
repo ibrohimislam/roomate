@@ -20,6 +20,12 @@ function parseDateSQL(d) {
     return d2;
 }
 
+function dateTranslation(d, i){
+	var now = new Date(d);
+	now.setDate(now.getDate()+i*7);
+	return now;
+}
+
 function pad(n, width, z) {
   z = z || '0';
   n = n + '';

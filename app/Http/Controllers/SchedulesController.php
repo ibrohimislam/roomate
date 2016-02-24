@@ -31,7 +31,7 @@ class SchedulesController extends Controller {
         $filterDate = $objectDate->format("Y/m/d");
 
 
-    	$schedules = Schedule::with(['course'])
+    	$schedules = Schedule::with(['course','room'])
     		->Where('room_id', $roomId)
     		->where('date', $filterDate)
     		->orderBy('start', 'asc')
