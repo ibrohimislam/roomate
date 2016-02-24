@@ -1,5 +1,17 @@
 var app = angular.module('myApp',['ngRoute', 'ngResource', 'autocomplete']);
 
+app.filter('regex', function() {
+  return function(input, field, regex) {
+      var patt = new RegExp(regex);      
+      var out = [];
+      for (var i = 0; i < input.length; i++){
+          if(patt.test(input[i][field]))
+              out.push(input[i]);
+      }      
+    return out;
+  };
+});
+
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/kuliah', {
@@ -121,7 +133,20 @@ app.controller('CoursesController', function($scope, CoursesResources){
 	
 	$("#view").foundation();
 
-	$scope.courses = CoursesResources.list();
+	$scope.courses = [];
+	$scope.tingkat = 2;
+
+	CoursesResources.list().$promise.then(function (result){
+		$scope.courses = result;
+	});
+
+	$scope.updatePage = function(tingkat){
+		$scope.tingkat = tingkat;
+	}
+
+	$scope.courseFilter = function(course){
+		return course.name.substring(2, 3) == $scope.tingkat;
+	}
 	
 	$scope.add = function(){
 		
