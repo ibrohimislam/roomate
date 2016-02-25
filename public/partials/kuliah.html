@@ -6,6 +6,15 @@
                 <div class="text-right">
                     <a class="button success" data-open="modalTambah"><i class="fi-plus"></i>&nbsp;Tambah</a>
                 </div>
+
+
+                <ul class="pagination">
+                    <li ng-class="{current:(tingkat==1)}"><a ng-click="updatePage(1)">1</a></li>
+                    <li ng-class="{current:(tingkat==2)}"><a ng-click="updatePage(2)">2</a></li>
+                    <li ng-class="{current:(tingkat==3)}"><a ng-click="updatePage(3)">3</a></li>
+                    <li ng-class="{current:(tingkat==4)}"><a ng-click="updatePage(4)">4</a></li>
+                </ul>
+
                 <table>
                     <thead>
                         <tr>
@@ -15,7 +24,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="(_, course) in courses">
+                        <tr ng-repeat="(_, course) in courses | filter:courseFilter">
                             <td>{{course.name}}</td>
                             <td>{{course.attendants}}</td>
                             <td>
@@ -25,6 +34,7 @@
                         </tr>
                     </tbody>
                 </table>
+
             </div>
         </div>
 
