@@ -381,15 +381,19 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 		var kode = $scope.selectedRoom;
 
 		var akumulasiJadwal = {};
+		akumulasiJadwal['Kosong']=100;
 
 		SchedulesResources.list({roomId: kode}).$promise.then(function(result){
 			var defer = $q.defer();
 
 			for(var i=0; i<result.length; i++) {
 				var jadwal = result[i];
+				
+				akumulasiJadwal['Kosong']=akumulasiJadwal['Kosong']-jadwal.duration;
 
-				if (typeof akumulasiJadwal[jadwal.course.name] == "undefined")
+				if (typeof akumulasiJadwal[jadwal.course.name] == "undefined"){
 					akumulasiJadwal[jadwal.course.name] = jadwal.duration;
+				}
 				else
 					akumulasiJadwal[jadwal.course.name] += jadwal.duration;
 
@@ -410,6 +414,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 				Object.keys(akumulasiJadwal).forEach(function(key, index){
 					data.push($q.when([key, akumulasiJadwal[key]]));
 				});
+
 
 				return $q.all(data).then(function(result){
 					console.log(result);
@@ -440,13 +445,11 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 
 			console.log(result);
 
-			
-	
 			for(var i=0; i<result.length; i++) {
 				var _jadwal = result[i];
-
-				if (typeof akumulasiPenggunaan[_jadwal.room.name] == "undefined")
+				if (typeof akumulasiPenggunaan[_jadwal.room.name] == "undefined"){
 					akumulasiPenggunaan[_jadwal.room.name] = _jadwal.duration;
+				}
 				else
 					akumulasiPenggunaan[_jadwal.room.name] += _jadwal.duration;
 
@@ -471,6 +474,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 					data_penggunaan_ruangan.push($q.when([key, akumulasiPenggunaan[key]]));
 				});
 
+				
 				return $q.all(data_penggunaan_ruangan).then(function(result){
 					$scope.akumulasiPenggunaanRuangan = result;
 					
@@ -483,8 +487,10 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 						};
 
 					var chart = new google.visualization.PieChart(document.getElementById('piechart2'));
+	
 
-					chart.draw(data_penggunaan_ruangan, opt);
+					chart1.draw(data_penggunaan_ruangan, opt);
+
 				});
 
 			});
