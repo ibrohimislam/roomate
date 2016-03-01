@@ -6,7 +6,7 @@
                 <div class="text-right">
                     <a class="button success" data-open="modalTambah"><i class="fi-plus"></i>&nbsp;Tambah</a>
                 </div>
-                <table>
+                <table ng-if="rooms.length">
                     <thead>
                         <tr>
                         <th width="200">Kode Ruangan</th>
@@ -27,14 +27,20 @@
                         </tr>
                     </tbody>
                 </table>
+                <div ng-if="rooms.length==0 && init" class="primary callout">
+                    <p><i class="fi-info"></i> Daftar ruangan masih kosong.</p>
+                </div>
             </div>
         </div>
 
         <div class="reveal" id="modalTambah" data-reveal>
-            <button class="close-button" data-close aria-label="Close modal" type="button">
+            <button class="close-button" ng-click="error_messages=[]" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
             <h2>Tambah Ruangan</h2>
+            <div ng-repeat="(_, message) in error_messages" class="primary callout">
+                <p><i class="fi-info"></i> {{message}}.</p>
+            </div>
             <form id="form-tambah">
                 <label>Kode Ruangan:<input type="text" name="name"></label>
                 <label>Kapasitas:<input type="text" name="capacity"></label>

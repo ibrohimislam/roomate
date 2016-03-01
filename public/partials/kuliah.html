@@ -39,10 +39,13 @@
         </div>
 
         <div class="reveal" id="modalTambah" data-reveal>
-            <button class="close-button" data-close aria-label="Close modal" type="button">
+            <button class="close-button" ng-click="error_messages=[]" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
             <h2>Tambah Kuliah</h2>
+            <div ng-repeat="(_, message) in error_messages" class="primary callout">
+                <p><i class="fi-info"></i> {{message}}.</p>
+            </div>
             <form id="form-tambah">
                 <label>Kode Kuliah:<input type="text" name="name"></label>
                 <label>Peserta:<input type="text" name="attendants"></label>

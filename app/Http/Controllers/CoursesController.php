@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Validator;
+
 use App\Course;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -22,6 +24,21 @@ class CoursesController extends Controller
 
 	public function store() {
 		$request = json_decode(request()->getContent());
+
+		$rules = array(
+	        'name' => 'required|unique:courses',
+			'attendants' => 'required'
+	    );
+
+	    $validation = Validator::make((array)$request, $rules);
+
+
+	    if ($validation->fails()) {
+            return response()->json(array(
+		        'error' => true,
+		        'message' => $validation->errors()->all()
+	        ,200));
+        }
 	    
 	    $course = new Course;
 	    $course->name = $request->name;

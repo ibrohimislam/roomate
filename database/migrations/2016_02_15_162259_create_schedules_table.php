@@ -14,12 +14,15 @@ class CreateSchedulesTable extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('course_id');
-            $table->integer('room_id');
+            $table->integer('course_id')->unsigned();
+            $table->integer('room_id')->unsigned();
             $table->string('date');
             $table->integer('start');
             $table->integer('duration');
             $table->timestamps();
+
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 

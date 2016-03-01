@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Validator;
+
 use App\Room;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -23,18 +25,36 @@ class RoomsController extends Controller
 
 	public function store() {
 		$request = json_decode(request()->getContent());
+
+		$rules = array(
+	        'name' => 'required|unique:rooms',
+			'capacity' => 'required'
+	    );
+
+	    $validation = Validator::make((array)$request, $rules);
+
+
+	    if ($validation->fails()) {
+            return response()->json(array(
+		        'error' => true,
+		        'message' => $validation->errors()->all()
+	        ,200));
+        }
 	    
 	    $room = new Room;
 	    $room->name = $request->name;
 	    $room->capacity = abs($request->capacity);
 	    $room->status = 0;
+
 		$saved = $room->save();
 
-	    return response()->json(array(
-	        'error' => !$saved,
-	        'rooms' => $room->toArray()),
-	        $saved?200:500
-	    );
+
+		if ($saved) {
+			return response()->json(array(
+	        'error' => false,
+	        'rooms' => $room->toArray())
+	        ,200);
+		}
 	}
 
     public function destroy($roomId) {

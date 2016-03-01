@@ -54,17 +54,32 @@ app.factory('RoomsResources', function ($resource) {
 app.controller('RoomsController', function($scope, RoomsResources){
 
 	$("#view").foundation();
-	$scope.rooms = RoomsResources.list();
+	RoomsResources.list().$promise.then(function (result) {
+		$scope.rooms = result;
+		$scope.init = true;
+	});
+	$scope.error_messages = [];
+	$scope.init = false;
 	
 	$scope.add = function(){
 		
 		var data = getFormJSON($('#form-tambah'));
 
 		RoomsResources.store(data).$promise.then(function (result) {
-		    $('#modalTambah').foundation('close');
-			RoomsResources.list().$promise.then(function (result){
-				$scope.rooms = result;
-			});
+
+			console.log(result);
+
+		    if (result.error) {
+				$scope.error_messages = result.message;
+		    } else {
+		    	$scope.error_messages = "";
+		    	
+		    	$('#modalTambah').foundation('close');
+				
+				RoomsResources.list().$promise.then(function (result){
+					$scope.rooms = result;
+				});
+		    }
 		});
 	}
 
@@ -133,6 +148,8 @@ app.controller('CoursesController', function($scope, CoursesResources){
 	
 	$("#view").foundation();
 
+	$scope.error_messages = [];
+
 	$scope.courses = [];
 	$scope.tingkat = 2;
 
@@ -153,10 +170,19 @@ app.controller('CoursesController', function($scope, CoursesResources){
 		var data = getFormJSON($('#form-tambah'));
 
 		CoursesResources.store(data).$promise.then(function (result) {
-		    $('#modalTambah').foundation('close');
-			CoursesResources.list().$promise.then(function (result){
-				$scope.courses = result;
-			});
+		    
+		    if (result.error) {
+				$scope.error_messages = result.message;
+		    } else {
+		    	$scope.error_messages = "";
+		    	
+		    	$('#modalTambah').foundation('close');
+				
+				CoursesResources.list().$promise.then(function (result){
+					$scope.courses = result;
+				});
+		    }
+			
 		});
 	}
 
