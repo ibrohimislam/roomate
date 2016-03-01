@@ -514,7 +514,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 					var chart = new google.visualization.PieChart(document.getElementById('piechart2'));
 	
 
-					chart1.draw(data_penggunaan_ruangan, opt);
+					chart.draw(data_penggunaan_ruangan, opt);
 
 				});
 
