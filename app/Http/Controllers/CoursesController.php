@@ -65,6 +65,21 @@ class CoursesController extends Controller
 
     public function update($courseId) {
     	$request = json_decode(request()->getContent());
+
+		$rules = array(
+	        'name' => 'required',
+			'attendants' => 'required'
+	    );
+
+	    $validation = Validator::make((array)$request, $rules);
+
+
+	    if ($validation->fails()) {
+            return response()->json(array(
+		        'error' => true,
+		        'message' => $validation->errors()->all()
+	        ,200));
+        }
     	
     	$course = Course::find($courseId);
 	    $course->name = $request->name;

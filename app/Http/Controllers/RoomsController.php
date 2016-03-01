@@ -69,7 +69,24 @@ class RoomsController extends Controller
     }
 
     public function update($roomId) {
+
     	$request = json_decode(request()->getContent());
+
+		$rules = array(
+	        'name' => 'required',
+			'capacity' => 'required',
+			'status' => 'required'
+	    );
+
+	    $validation = Validator::make((array)$request, $rules);
+
+
+	    if ($validation->fails()) {
+            return response()->json(array(
+		        'error' => true,
+		        'message' => $validation->errors()->all()
+	        ,200));
+        }
     	
     	$room = Room::find($roomId);
 	    $room->name = $request->name;

@@ -59,6 +59,7 @@ app.controller('RoomsController', function($scope, RoomsResources){
 		$scope.init = true;
 	});
 	$scope.error_messages = [];
+	$scope.error_messages_edit = [];
 	$scope.init = false;
 	
 	$scope.add = function(){
@@ -72,7 +73,7 @@ app.controller('RoomsController', function($scope, RoomsResources){
 		    if (result.error) {
 				$scope.error_messages = result.message;
 		    } else {
-		    	$scope.error_messages = "";
+		    	$scope.error_messages = [];
 		    	
 		    	$('#modalTambah').foundation('close');
 				
@@ -115,17 +116,23 @@ app.controller('RoomsController', function($scope, RoomsResources){
 		var targetId = $('#ubah-id').val();
 		var data = getFormJSON($('#form-ubah'));
 
-		$("#spinner").foundation('open');
 
 		RoomsResources.update({id: targetId}, data).$promise.then(function (result) {
 		    
-		    $('#modalUbah').foundation('close');
-			RoomsResources.list().$promise.then(function (result){
-				
-				$scope.rooms = result;
-				$("#spinner").foundation('close');
+			console.log(result);
 
-			});
+			if (result.error) {
+				$scope.error_messages_edit = result.message;
+		    } else {
+		    	$scope.error_messages_edit = [];
+		    	
+		    	$('#modalUbah').foundation('close');
+				RoomsResources.list().$promise.then(function (result){
+					
+					$scope.rooms = result;
+
+				});
+		    }
 
 		});
 	}
@@ -149,6 +156,7 @@ app.controller('CoursesController', function($scope, CoursesResources){
 	$("#view").foundation();
 
 	$scope.error_messages = [];
+	$scope.error_messages_edit = [];
 
 	$scope.courses = [];
 	$scope.tingkat = 2;
@@ -174,7 +182,7 @@ app.controller('CoursesController', function($scope, CoursesResources){
 		    if (result.error) {
 				$scope.error_messages = result.message;
 		    } else {
-		    	$scope.error_messages = "";
+		    	$scope.error_messages = [];
 		    	
 		    	$('#modalTambah').foundation('close');
 				
@@ -217,16 +225,19 @@ app.controller('CoursesController', function($scope, CoursesResources){
 		var targetId = $('#ubah-id').val();
 		var data = getFormJSON($('#form-ubah'));
 
-		$("#spinner").foundation('open');
-
 		CoursesResources.update({id: targetId}, data).$promise.then(function (result) {
-		    $('#modalUbah').foundation('close');
-			CoursesResources.list().$promise.then(function (result){
+			if (result.error) {
+				$scope.error_messages_edit = result.message;
+		    } else {
+		    	$scope.error_messages_edit = [];
+		    	
+		    	$('#modalUbah').foundation('close');
+				CoursesResources.list().$promise.then(function (result){
 
-				$("#spinner").foundation('close');
-				$scope.courses = result;
+					$scope.courses = result;
 
-			});
+				});
+		    }
 		});
 	}
 });
@@ -507,7 +518,6 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 			};
 
 
-
 			if (result.length == 0)
 				defer.resolve();
 
@@ -533,7 +543,7 @@ app.controller('StatisticController', function($q, $scope, RoomsResources, Cours
 						title: 'perbandingan booking ruangan (dalam jam dan persen)'
 						};
 
-					var chart = new google.visualization.PieChart(document.getElementById('piechart2'));
+					var chart = new google.visualization.BarChart(document.getElementById('piechart2'));
 
 					chart.draw(data_penggunaan_ruangan, opt);
 				});

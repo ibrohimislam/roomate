@@ -66,13 +66,16 @@
         </div>
 
         <div class="reveal" id="modalUbah" data-reveal>
-            <button class="close-button" data-close aria-label="Close modal" type="button">
+            <button class="close-button" ng-click="error_messages_edit = []" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
             <h2>Ubah Kuliah</h2>
+            <div ng-repeat="(_, message) in error_messages_edit" class="primary callout">
+                <p><i class="fi-info"></i> {{message}}</p>
+            </div>
             <input type="hidden" id="ubah-id">
             <form id="form-ubah">
-                <label>Kode Kuliah:<input type="text" name="name" ng-model="room.name"></label>
+                <label>Kode Kuliah:<input type="text" name="name" ng-model="room.name" readonly=""></label>
                 <label>Peserta:<input type="text" name="attendants" ng-model="room.attendants"></label>
                 <a class="button" ng-click="update()">Ubah</a>
             </form>

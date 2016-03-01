@@ -39,7 +39,7 @@
             </button>
             <h2>Tambah Ruangan</h2>
             <div ng-repeat="(_, message) in error_messages" class="primary callout">
-                <p><i class="fi-info"></i> {{message}}.</p>
+                <p><i class="fi-info"></i> {{message}}</p>
             </div>
             <form id="form-tambah">
                 <label>Kode Ruangan:<input type="text" name="name"></label>
@@ -49,7 +49,7 @@
         </div>
 
         <div class="reveal" id="modalHapus" data-reveal>
-            <button class="close-button" data-close aria-label="Close modal" type="button">
+            <button class="close-button" ng-click="error_messages_edit=[]" data-close aria-label="Close modal" type="button">
                 <span aria-hidden="true">&times;</span>
             </button>
             <h2>Perhatian</h2>
@@ -65,9 +65,12 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             <h2>Ubah Ruangan</h2>
+            <div ng-repeat="(_, message) in error_messages_edit" class="primary callout">
+                <p><i class="fi-info"></i> {{message}}</p>
+            </div>
             <input type="hidden" id="ubah-id">
             <form id="form-ubah">
-                <label>Kode Ruangan:<input type="text" name="name" ng-model="room.name"></label>
+                <label>Kode Ruangan:<input type="text" name="name" ng-model="room.name" readonly></label>
                 <label>Kapasitas:<input type="text" name="capacity" ng-model="room.capacity"></label>
                 <legend>Status</legend>
                 <label for="normal"><input type="radio" name="status" value="0" id="normal" ng-model="room.status" required> Normal</label>
